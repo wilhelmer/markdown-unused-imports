@@ -10,10 +10,10 @@ This means that all import statements without a matching XML tag on the page wil
 
 When viewing the following Markdown sample in VS Code, the `MyComponentSource` import statement is marked as an error because it's never used.
 
-```md
-import PartialExample from './_markdown-partial-example.mdx';  << this is fine
-import MyComponentSource from '!!raw-loader!./myComponent';    << never used, error 
-import CodeBlock from '@theme/CodeBlock'; << this is fine
+```markdown
+import PartialExample from './_markdown-partial-example.mdx';
+import MyComponentSource from '!!raw-loader!./myComponent';
+import CodeBlock from '@theme/CodeBlock';
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
 
