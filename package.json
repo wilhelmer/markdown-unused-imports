@@ -3,7 +3,7 @@
   "displayName": "Find Unused Imports in Markdown",
   "description": "Finds unused import statements in Markdown files and marks them as errors.",
   "version": "0.0.1",
-  "publisher": "wilhelmer",
+  "publisher": "LWilhelmer",
   "repository": "https://github.com/wilhelmer/markdown-unused-imports",
   "icon": "icon.png",
   "engines": {
