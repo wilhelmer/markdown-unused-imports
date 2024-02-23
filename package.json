@@ -1,0 +1,37 @@
+{
+  "name": "markdown-unused-imports",
+  "displayName": "Find Unused Imports in Markdown",
+  "description": "Finds unused import statements in Markdown files and marks them as errors.",
+  "version": "0.0.1",
+  "publisher": "wilhelmer",
+  "engines": {
+    "vscode": "^1.86.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.4",
+    "@types/vscode": "^1.64.0"
+  },
+  "bugs": {
+    "url": "https://github.com/wilhelmer/markdown-unused-imports/issues"
+  },
+  "repository": "https://github.com/wilhelmer/markdown-unused-imports",
+  "homepage": "https://github.com/wilhelmer/markdown-unused-imports",
+  "keywords": [
+    "markdown",
+    "unused",
+    "import",
+    "statements"
+  ],
+  "author": "Lars Wilhelmer",
+  "license": "MIT"
+}
