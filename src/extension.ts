@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 let gDC: vscode.DiagnosticCollection;
+//let output = vscode.window.createOutputChannel("Extension Output");
 
 function findAndReportUnusedImports(document: vscode.TextDocument) {
     const text = document.getText();
@@ -14,9 +15,10 @@ function findAndReportUnusedImports(document: vscode.TextDocument) {
             const importStatement = importMatch[1].trim().replace(/[{,}\s]/g, '');
             imports.push(importStatement);
         } else {
-            const tagMatch = line.match(/<([^\s>\/]+)/);
+            const tagMatch = line.match(/<([A-Z][^\s>\/]+)/);
             if (tagMatch) {
                 const tagName = tagMatch[1];
+                //output.appendLine("Tag found: " + tagName);
                 tags.push(tagName);
             }
         }
@@ -62,6 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
             findAndReportUnusedImports(editor.document);
         }
     });
+    //output.show();
 }
 
 export function deactivate() {}
