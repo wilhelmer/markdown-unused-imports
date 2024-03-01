@@ -11,25 +11,26 @@ function findAndReportUnusedImports(document: vscode.TextDocument) {
 
     // Iterate through each line of the document
     lines.forEach(line => {
-        // Match import statements and extract imported module names
-        const importMatch = line.match(/^import\s+(.*?)\s+from\s+/);
-        if (importMatch) {
-            const importStatement = importMatch[1].trim().replace(/[{,}\s]/g, '');
-            imports.push(importStatement);
+        const importStatement = line.match(/^import\s+(.*?)\s+from\s+/);
+        if (importStatement) {
+            // Line contains an import statement, extract imported module name
+            const importModule = importStatement[1].trim().replace(/[{,}\s]/g, '');
+            //output.appendLine("Import module found: " + importModule);
+            imports.push(importModule);
         } else {
-            // Match XML tags and extract tag names
-            const tagMatch = line.match(/<([A-Z][^\s>\/]+)/);
-            if (tagMatch) {
-                const tagName = tagMatch[1];
-                //output.appendLine("Tag found: " + tagName);
-                tags.push(tagName);
+            // No import statement found, check whether line contains XML tags
+            let match;
+            let regexp = /<([A-Z][^\s>\/]+)/g;
+            while ((match = regexp.exec(line)) !== null) {
+                //output.appendLine("Tag found:" + match[1]);
+                tags.push(match[1]);
             }
-            // Match src={XYZ} patterns and extract XYZ values
-            // Treat them as tag names for simplicity
-            const srcMatch = line.match(/src=\{(\w+)\}/);
-            if (srcMatch) {
-                const srcValue = srcMatch[1];
-                tags.push(srcValue);
+            
+            // Also check for src={XYZ} patterns
+            regexp = /src=\{(\w+)\}/g;
+            while ((match = regexp.exec(line)) !== null) {
+                //output.appendLine("Src found:" + match[1]);
+                tags.push(match[1]);
             }
         }
     });
@@ -39,6 +40,7 @@ function findAndReportUnusedImports(document: vscode.TextDocument) {
 
     // Create error message for each unused import
     const diagnostics: vscode.Diagnostic[] = unusedImports.map(unusedImport => {
+        //output.appendLine("Unused import: " + unusedImport);
         let lineNumber = lines.findIndex(line => line.match(`import.*?${unusedImport}.*?from`));
         if (lineNumber !== -1) {
             const range = new vscode.Range(lineNumber, 0, lineNumber, lines[lineNumber].length);
