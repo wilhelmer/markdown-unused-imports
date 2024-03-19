@@ -1,58 +1,50 @@
 import * as vscode from 'vscode';
 
 let gDC: vscode.DiagnosticCollection;
-//let output = vscode.window.createOutputChannel("Extension Output");
 
 function findAndReportUnusedImports(document: vscode.TextDocument) {
     const text = document.getText();
     const lines = text.split('\n');
-    const imports: string[] = [];
+    const imports: { name: string, lineNumber: number }[] = [];
     const tags: string[] = [];
 
     // Iterate through each line of the document
-    lines.forEach(line => {
+    lines.forEach((line, index) => {
         const importStatement = line.match(/^import\s+(.*?)\s+from\s+/);
         if (importStatement) {
             // Line contains an import statement, extract imported module name
             const importModule = importStatement[1].trim().replace(/[{,}\s]/g, '');
-            //output.appendLine("Import module found: " + importModule);
-            imports.push(importModule);
+            // Store module name + line number
+            imports.push({ name: importModule, lineNumber: index });
         } else {
             // No import statement found, check whether line contains XML tags
             let match;
             let regexp = /<([A-Z][^\s>\/]+)/g;
             while ((match = regexp.exec(line)) !== null) {
-                //output.appendLine("Tag found:" + match[1]);
                 tags.push(match[1]);
             }
             
             // Also check for src={XYZ} patterns
             regexp = /src=\{(\w+)\}/g;
             while ((match = regexp.exec(line)) !== null) {
-                //output.appendLine("Src found:" + match[1]);
                 tags.push(match[1]);
             }
         }
     });
 
     // Find unused imports by comparing imported module names with tag names
-    const unusedImports = imports.filter(importName => !tags.includes(importName));
+    const unusedImports = imports.filter(importItem => !tags.includes(importItem.name));
 
     // Create error message for each unused import
     const diagnostics: vscode.Diagnostic[] = unusedImports.map(unusedImport => {
-        //output.appendLine("Unused import: " + unusedImport);
-        let lineNumber = lines.findIndex(line => line.match(`import.*?${unusedImport}.*?from`));
-        if (lineNumber !== -1) {
-            const range = new vscode.Range(lineNumber, 0, lineNumber, lines[lineNumber].length);
-            const diagnostic = new vscode.Diagnostic(
-                range,
-                `Unused import "${unusedImport}"`,
-                vscode.DiagnosticSeverity.Error
-            );
-            return diagnostic;
-        }
-        return null;
-    }).filter(diagnostic => diagnostic !== null) as vscode.Diagnostic[];
+        const range = new vscode.Range(unusedImport.lineNumber, 0, unusedImport.lineNumber, lines[unusedImport.lineNumber].length);
+        const diagnostic = new vscode.Diagnostic(
+            range,
+            `Unused import "${unusedImport.name}"`,
+            vscode.DiagnosticSeverity.Error
+        );
+        return diagnostic;
+    });
 
     gDC.set(document.uri, diagnostics);
 }
@@ -78,7 +70,6 @@ export function activate(context: vscode.ExtensionContext) {
             findAndReportUnusedImports(editor.document);
         }
     });
-    //output.show();
 }
 
 export function deactivate() {}
